@@ -1,0 +1,145 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
+        <title></title>
+        <!--[if lt IE 9]>
+        <script src="https://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+
+        <link href="css/cssreset-min.css" rel="stylesheet" type="text/css" />
+        <link href="css/bootstrap.css" rel="stylesheet" type="text/css" />
+        <link href="css/toastr.min.css" rel="stylesheet" type="text/css" />
+
+        <link href="css/pinocchio.css" rel="stylesheet" type="text/css" />
+
+        <script type="text/javascript">
+
+
+            var google_account_id = '<<put account id here!!>>'
+            var _gaq = _gaq || [];
+            _gaq.push(['_setAccount', google_account_id]);
+            _gaq.push(['_trackPageview']);
+
+            (function() {
+                var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+                ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+                var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+            })();
+
+        </script>
+    </head>
+
+    <body>
+        <div class="container">
+            <div id="fast" class="well">
+                <img class="spinner" src="img/ajax-loader.gif" />
+            </div>
+
+            <div id="slow" class="well">
+                <img class="spinner" src="img/ajax-loader.gif" />
+            </div>
+        </div>
+
+        <div id="templates">
+        </div>
+    </body>
+
+    <script type="text/javascript" src="js/lib/l.js?checkLoaded">
+        ljs
+            .addAliases({
+                pinocchio_core: [
+                    "js/lib/jquery-1.7.2.min.js",
+                    "js/lib/ICanHandlebarz.js",
+                    "js/lib/handlebars-1.0.0.beta.6.js",
+                    "js/lib/extend.min.js",
+                    "js/lib/my.class.min.js",
+                    "js/lib/radio.min.js",
+                    "js/lib/murmurhash3_gc.js" ],
+                pinocchio_ui: [
+                    "js/lib/jquery.pajinate.min.js",
+                    "js/lib/bootstrap.min.js",
+                    "js/lib/toastr.min.js" ],
+                pinocchio_util: [
+                    "js/lib/underscore-min.js",
+                    "js/lib/date.js",
+                    "js/lib/LocalDB.min.js",],
+                pinocchio_itl: [
+                    "js/lib/i18next-1.3.3.js" ],
+                pinocchio_mobile: [
+                    "js/lib/ua.js",
+                    "js/lib/swipe.min.js" ],
+                pinocchio_charting: [
+                    "js/lib/jquery.sparkline.min.js",
+                    "js/lib/d3.v3.min.js"],
+                app_support: [ "js/pinocchio/pinocchio.js"  ],
+                app: [ "js/pinocchio/pinocchio.mock.js" ]
+            })
+            .load(
+                    "pinocchio_core",
+                    [
+                        "pinocchio_ui",
+                        "pinocchio_util",
+                        /*"pinocchio_itl",*/
+                        /*"pinocchio_mobile",*/
+                        "pinocchio_charting"
+                    ],
+                    "app_support",
+                    "app", function() {
+                ljs_complete();
+            });
+    </script>
+
+    <script type="text/javascript">
+
+        function ljs_complete() {
+
+            extend('pinocchio', {
+                "init_with_google_charting": function() {
+
+                    ljs.load("https://www.google.com/jsapi",function(){
+                        google.load("visualization", "1", { callback:function() {
+                            pinocchio.init();
+                        }, packages:["corechart"]});
+                    });
+                },
+                "init": function () {
+                    $('#templates').load( "templates/pinocchio.template", function() {
+                        ich.grabTemplates();
+
+                        var init_data = {
+                            "mode": "production"
+                        }
+                        //if we're local, force fake credentials
+                        if( location.port == 8080 || parent === window || parent == window ) {
+                            init_data.mode = "debug";
+                        }
+
+                        radio("/init").broadcast( init_data );
+                    });
+                },
+                "app": { }
+            });
+
+            var security    = new pinocchio.security.PassiveSecurity();
+            var mock_svc    = new pinocchio.mock.Service( "it doesn't matter here", security );
+            var services    = { };
+            services[pinocchio.mock.App.MOCK_SERVICE] = mock_svc;
+
+            pinocchio.app   = new pinocchio.mock.App( "Demo Application", security, services);
+
+            var model       = new pinocchio.mock.Model( pinocchio.mock.App.MOCK_MODEL );
+            var fast_view   = new pinocchio.mock.View( "Fast View", "#fast", model, true, true );
+            var slow_view   = new pinocchio.mock.View( pinocchio.mock.App.MOCK_VIEW_DELAY, "#slow", model, true, false );
+
+            pinocchio.app.add_view( fast_view, true, true );
+            pinocchio.app.add_view( slow_view, true, true );
+
+            pinocchio.init();
+
+        }
+
+    </script>
+
+</html>

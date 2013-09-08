@@ -1,0 +1,24 @@
+
+<script id="hello_world" type="text/html">
+    <div>Hello, world!</div>
+</script>
+
+
+<script id="count" class="helper" data-args="array" type="text/html">
+//<![CDATA[ // Optional if there are no &, <, or > in your javascript.
+    return array.length;
+//]]>
+</script>
+
+
+<script id="mock_template" type="text/html">
+
+    <div>We have got {{count mock_data}} elements to render today!</div>
+
+    <ul>
+    {{#mock_data}}
+        <li class="mock-item" onclick="radio('/mock_event/yack').broadcast('{{id}}');">{{message}}</li>
+    {{/mock_data}}
+    </ul>
+
+</script>
