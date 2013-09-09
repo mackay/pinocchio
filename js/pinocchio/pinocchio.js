@@ -210,6 +210,15 @@ extend('pinocchio', {
             //super classes init "stuff" here
         },
 
+
+        get_service: function( id ) {
+            if( !this.services.hasOwnProperty(id) ) {
+                throw("No service available with id " + id + ".");
+            }
+
+            return this.services[id];
+        },
+
         add_view: function( view, add_model, replace_existing ) {
             add_model = add_model || false;
             replace_existing = replace_existing || false;

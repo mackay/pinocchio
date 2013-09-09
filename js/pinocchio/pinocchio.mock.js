@@ -67,8 +67,11 @@ extend('pinocchio.mock',{
             var app = this;
 
             //we've got to "initialize" our application, so make some calls
-            this.services[pinocchio.mock.App.MOCK_SERVICE].get_some_data( "param", function(data) { app.set_the_yack_data(data); }, pinocchio.mock.App._generic_svc_failure );
-            this.services[pinocchio.mock.App.MOCK_SERVICE].get_some_data_and_fail( "param", function(data) { app.set_the_yack_data(data); }, pinocchio.mock.App._generic_svc_failure );
+            var service = this.get_service(pinocchio.mock.App.MOCK_SERVICE);
+            var fail = pinocchio.mock.App._generic_svc_failure;
+
+            service.get_some_data( "param", function(data) { app.set_the_yack_data(data); }, fail );
+            service.get_some_data_and_fail( "param", function(data) { app.set_the_yack_data(data); }, fail );
 
             //validate some of the current views
             try {
