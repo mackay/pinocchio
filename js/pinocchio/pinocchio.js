@@ -146,10 +146,10 @@ extend('pinocchio', {
             }
         },
         show: function() {
-            $(selector).css("display", this.display_css_type);
+            $(this.selector).css("display", this.display_css_type);
         },
         hide: function() {
-            $(selector).css("display", "none");
+            $(this.selector).css("display", "none");
         },
         update: function() {
             //overriding functions should perform **any**!!
@@ -240,6 +240,22 @@ extend('pinocchio', {
             }
 
             return this.views[id];
+        },
+        hide_view: function( id ) {
+            if( id !== null ) {
+                this.get_view(id).hide();
+            } else {
+                for( var view_id in this.views ) {
+                    this.views[view_id].hide();
+                }
+            }
+        },
+        show_view: function( id ) {
+            this.get_view(id).show();
+        },
+        show_only: function( id ) {
+            this.hide_view();
+            this.show_view( id );
         },
 
         add_model: function( model, replace_existing ) {
