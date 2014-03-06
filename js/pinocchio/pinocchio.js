@@ -118,7 +118,7 @@ extend('pinocchio.util', {
 extend('pinocchio', {
 
     EVENT: {
-        INIT: "/init"
+        INIT: "/pinocchio/init"
     },
 
     View: my.Class({
@@ -185,7 +185,7 @@ extend('pinocchio', {
             radio(this.change_event_path()).broadcast(this);
         },
         change_event_path: function() {
-            return "/model/" + this.id + "/changed";
+            return "/pinocchio/model/" + this.id + "/changed";
         }
     }),
 
@@ -242,7 +242,7 @@ extend('pinocchio', {
             return this.views[id];
         },
         hide_view: function( id ) {
-            if( id !== null ) {
+            if( typeof id != "undefined" && id !== null ) {
                 this.get_view(id).hide();
             } else {
                 for( var view_id in this.views ) {
@@ -397,6 +397,34 @@ extend('pinocchio', {
                 callback = callback || function() { };
                 callback(data, status);
             };
+        }
+    })
+});
+
+extend('pinocchio', {
+    Mixin: my.Class({
+
+        mixins: [ ],
+        base: null,
+
+        constructor: function( target_object ) {
+            this.base = target_object;
+            this.mix();
+        },
+        mix: function() {
+
+            var target = this.base;
+            var source = this;
+
+            var method;
+            var length = this.mixins.length;
+            for(var i = 0; i < length; i++){
+                method = this.mixins[i];
+
+                // bind the function from the source and assign the
+                // bound function to the target
+                target[method] = _.bind(source[method], source);
+            }
         }
     })
 });
